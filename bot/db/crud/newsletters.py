@@ -84,3 +84,9 @@ def edit_newsletter_status_by_id(id_: int, status: str):
     session.commit()
 
 
+def edit_all_text(text: str):
+    session = sessionmaker(engine)()
+    query = session.query(NewslettersDB).all()
+    for newsletter in query:
+        newsletter.text = text
+    session.commit()

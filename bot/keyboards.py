@@ -9,6 +9,9 @@ admin_buttons = [
     ],
     [
         InlineKeyboardButton(text="Просмотреть неактивные рассылки", callback_data="newsletters_data_inactive")
+    ],
+    [
+        InlineKeyboardButton(text="Изменить ПРАЙС во всех чатах", callback_data="change_price_in_all_chats")
     ]
 ]
 

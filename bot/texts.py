@@ -32,3 +32,5 @@ edit_group_id_text = "Напишите новый ID группы"
 edit_mailing_times_text = "Напишите новое время рассылки формата:\nhh:mm"
 edit_text_text = "Напишите новый прайс"
 edit_status_text = "Измените статус"
+
+new_price = "Введите новый ПРАЙС для всех групп"

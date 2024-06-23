@@ -40,7 +40,6 @@ async def sender(client: TelegramClient):
                         year=now.year, month=now.month, day=now.day + 1,
                         hour=hours, minute=minutes, second=0
                     )
-                print(time__)
                 shed.add_job(send_message, "date",
                              args=[client, newsletter.group_id, newsletter.text, newsletter.group_name],
                              next_run_time=time__)
@@ -50,6 +49,7 @@ async def sender(client: TelegramClient):
 
 async def mailer():
     client = TelegramClient('anon', config.API_ID, config.API_HASH)
+    client.parse_mode = "html"
     await client.start()
     await client.connect()
     await sender(client)

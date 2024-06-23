@@ -115,14 +115,15 @@ async def mailing_times_(message: Message, state: FSMContext):
 
 @router.message(CreateNewsletter.text)
 async def text_(message: Message, state: FSMContext):
-    text = str(message.text)
+    text = message.html_text
     await state.update_data({"text": text})
 
     data = await state.get_data()
 
     await message.answer(
         text=texts.create_text(data),
-        reply_markup=keyboards.yes_no_keyboard
+        reply_markup=keyboards.yes_no_keyboard,
+        parse_mode="HTML"
     )
 
     await state.set_state(CreateNewsletter.last)
@@ -140,7 +141,7 @@ async def yes_create_(callback: CallbackQuery, state: FSMContext):
         group_name=data["group_name"],
         group_id=int(data["group_id"]),
         mailing_times=str(data["mailing_times"]),
-        text=str(data["text"]),
+        text=data["text"],
         status=True
     )
 
@@ -379,7 +380,7 @@ async def edit_group_id_(callback: CallbackQuery, state: FSMContext):
 
 @router.message(EditGroupText.info)
 async def edit_group_name_state(message: Message, state: FSMContext):
-    new_text = str(message.text)
+    new_text = message.html_text
     data = await state.get_data()
 
     id_, page_ = data["info"]
@@ -450,10 +451,38 @@ async def watch_card_(callback: CallbackQuery, state: FSMContext):
     )
 
 
+class NewPrice(StatesGroup):
+    new_price = State()
+
+
+@router.callback_query(F.data == "change_price_in_all_chats")
+async def change_price_(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await callback.message.edit_reply_markup()
+    await state.clear()
+
+    await callback.message.answer(
+        text=texts.new_price,
+        reply_markup=keyboards.back_keyboard
+    )
+    await state.set_state(NewPrice.new_price)
+
+
+@router.message(NewPrice.new_price)
+async def new_price_(message: Message, state: FSMContext):
+    await state.clear()
+
+    text = message.html_text
+    crud_newsletters.edit_all_text(text)
+    await message.answer(
+        text="ПРАЙС успешно сменился",
+        reply_markup=keyboards.back_keyboard
+    )
+
+
 @router.message(Command("ui"))
 async def m(message: Message):
     import bot.mailer as mailer
-    text = message.text
     await mailer.mailer()
 
 
